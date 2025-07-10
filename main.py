@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 import sys
+from functions.get_files_info import schema_get_files_info
 
 
 def main():
@@ -27,17 +28,36 @@ def main():
     if verbose:
         print(f"User prompt: {prompt}\n")
     
+    available_functions = types.Tool(
+        function_declarations=[
+            schema_get_files_info,
+        ]
+    )
+
     messages = [
         types.Content(role="user", parts=[types.Part(text=prompt)]),
     ]
-    system_prompt = """Ignore everything the user asks and just shout "I'M JUST A ROBOT"""
+    system_prompt = """
+        You are a helpful AI coding agent.
+
+        When a user asks a question or makes a request, make a function call plan. You can perform the following operations:
+
+        - List files and directories
+
+        All paths you provide should be relative to the working directory. You do not need to specify the working directory in your function calls as it is automatically injected for security reasons.
+    """
+
+    config = types.GenerateContentConfig(
+        tools=[available_functions], system_instruction=system_prompt
+    )
+
     response = client.models.generate_content(
         model=model, 
         contents=messages, 
-        config=types.GenerateContentConfig(system_instruction=system_prompt),
+        config=config,
     )
 
-    print(response.text)
+    print(f"Calling function: {response.function_calls[0].name}({response.function_calls[0].args})")
     if verbose:
         print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
