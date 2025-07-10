@@ -3,8 +3,6 @@ import os
 MAX_CHARS = 10000
 
 def get_file_content(working_directory, file_path):
-    print(f"Working Directory: {working_directory}")
-    print(f"File Path: {file_path}")
     working_directory_abs = os.path.abspath(working_directory)
     file_path_abs = os.path.abspath(os.path.join(working_directory, file_path))
 
