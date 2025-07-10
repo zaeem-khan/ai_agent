@@ -1,17 +1,15 @@
-from functions.get_files_info import get_files_info
+from functions.get_file_content import get_file_content
+
 print("Test 1")
-result_one = get_files_info("calculator", ".")
+result_one = get_file_content("calculator", "main.py")
 print(result_one)
 
 print("Test 2")
-result_two = get_files_info("calculator", "pkg")
+result_two = get_file_content("calculator", "pkg/calculator.py")
 print(result_two)
 
 print("Test 3")
-result_three = get_files_info("calculator", "/bin")
+result_three = get_file_content("calculator", "/bin/cat")
 print(result_three)
 
-print("Test 4")
-result_four = get_files_info("calculator", "../")
-print(result_four)
 
